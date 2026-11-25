@@ -60,6 +60,8 @@ def create_accounts():
 ######################################################################
 # LIST ALL ACCOUNTS
 ######################################################################
+
+
 @app.route("/accounts", methods=["GET"])
 def list_accounts():
     """
@@ -67,16 +69,16 @@ def list_accounts():
     This endpoint list all account
     """
     app.logger.info("Request to list Accounts")
-    
+
     # use the Account.all() method to retrieve all accounts
     accounts = Account.all()
-    
+
     # create a list of serialize() accounts
     list_accounts = [account.serialize() for account in accounts]
-    
-    # log the number of accounts being returned in the list 
+
+    # log the number of accounts being returned in the list
     app.logger.info("Returning %d accounts", len(list_accounts))
-    
+
     # return the list with a return code of status.HTTP_200_OK
     return jsonify(list_accounts), status.HTTP_200_OK
 
@@ -91,20 +93,24 @@ def read_account(account_id):
     This endpoint read an account based on the ID that is sent
     """
     app.logger.info("Request to read an Account with id: %s", account_id)
-    
+
     # use the Account.find() method to find the account
     account = Account.find(account_id)
-    
+
     # abort() with a status.HTTP_404_NOT_FOUND if it cannot be found
     if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id {account_id} not found")
- 
-    # return the serialize() version of the account with a return code of status.HTTP_200_OK
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Account with id {account_id} not found")
+
+    # return the serialize() version of the account with a return code of
+    # status.HTTP_200_OK
     return jsonify(account.serialize()), status.HTTP_200_OK
 
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
+
+
 @app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_accounts(account_id):
     """
@@ -112,26 +118,31 @@ def update_accounts(account_id):
     This endpoint updates an account based on the data in the body that is sent
     """
     app.logger.info("Request to update an Account with id: %s", account_id)
-    
+
     # use the Account.find() method to retrieve the account by the account_id
     account = Account.find(account_id)
-    
+
     # abort() with a status.HTTP_404_NOT_FOUND if it cannot be found
     if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id {account_id} not found")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Account with id {account_id} not found")
 
-    # call the deserialize() method on the account passing in request.get_json()
+    # call the deserialize() method on the account passing in
+    # request.get_json()
     account.deserialize(request.get_json())
-    
+
     # call account.update() to update the account with the new data
     account.update()
-    
-    # return the serialize() version of the account with a return code of status.HTTP_200_OK
+
+    # return the serialize() version of the account with a return code of
+    # status.HTTP_200_OK
     return jsonify(account.serialize()), status.HTTP_200_OK
 
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
+
+
 @app.route("/accounts/<int:account_id>", methods=["DELETE"])
 def delete_accounts(account_id):
     """
@@ -139,7 +150,7 @@ def delete_accounts(account_id):
     This endpoint deletes an account based on the ID that is sent
     """
     app.logger.info("Request to delete an Account with id: %s", account_id)
-    
+
     # use the Account.find() method to retrieve the account by the account_id
     account = Account.find(account_id)
 
@@ -147,9 +158,12 @@ def delete_accounts(account_id):
     if account:
         account.delete()
     else:
-        app.logger.info("Account with id %s not found, nothing to delete", account_id)
-    
-    # return and empty body ("") with a return code of status.HTTP_204_NO_CONTENT
+        app.logger.info(
+            "Account with id %s not found, nothing to delete",
+            account_id)
+
+    # return and empty body ("") with a return code of
+    # status.HTTP_204_NO_CONTENT
     return "", status.HTTP_204_NO_CONTENT
 
 ######################################################################
